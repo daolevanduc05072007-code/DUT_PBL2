@@ -54,6 +54,16 @@ void Game::HandleInput()
         return;
     }
 
+    if ( IsKeyPressed(KEY_Z) )
+    {
+        if ( grid != nullptr && grid->UndoMove() )
+        {
+            iscomplete = false;
+            Flag_Win = false;
+        }
+        return;
+
+    }
     if ( iscomplete == true )
     {
         if ( IsKeyPressed(KEY_ENTER) )

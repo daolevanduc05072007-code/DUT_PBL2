@@ -1,4 +1,5 @@
 #include"Grid.h"
+
 const int mx[4] = {  0 , 0 ,  -1 , 1 };
 const int my[4] = { -1 , 1 ,   0 , 0 };
 
@@ -48,8 +49,11 @@ Grid::Grid( vector<string> &LevelData ,  const int &sw , const int &sh )
 
 void Grid::MovePlayer( int keymove )
 {
+    MoveState previousState{ player , Boxes };
+
     if ( CheckLegitMove(keymove) == true )
     {
+        moveHistory.push_back( previousState );
         cntMove++;
         player = Player(player.getX()+mx[keymove], player.getY()+my[keymove] , cellSize , offsetX , offsetY );
     }
@@ -138,4 +142,21 @@ void Grid::Draw()
     }
 
     player.Draw();
+}
+
+bool Grid::UndoMove()
+{
+    if ( moveHistory.empty() )
+    {
+        return false;
+    }
+
+    MoveState previousState = moveHistory.back();
+    moveHistory.pop_back();
+
+    player = previousState.player;
+    Boxes = previousState.boxes;
+    cntMove--;
+
+    return true;
 }
