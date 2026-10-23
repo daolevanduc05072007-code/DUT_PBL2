@@ -1,6 +1,7 @@
 #pragma once
 #include<raylib.h>
 #include"Colour.h"
+class AssetManager;
 class Entity
 {
     protected:
@@ -14,7 +15,7 @@ class Entity
         Entity( int x , int y , int cellSize , int offSetX , int offsetY );
         int getX() const;
         int getY() const;
-        virtual void Draw() = 0;
+        virtual void Draw( const AssetManager &assets ) = 0;
         virtual ~Entity() {}    
 
 };

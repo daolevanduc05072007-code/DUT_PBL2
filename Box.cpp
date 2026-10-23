@@ -11,10 +11,31 @@ void Box::SetOnTarget( bool status)
     onTarget = status;
 }
 
-void Box::Draw()
+void Box::Draw( const AssetManager &assets ) 
 {
+    TextureAsset image = onTarget ? TextureAsset::BoxOnTarget : TextureAsset::Box;
+    Texture2D texture = assets.GetTexture(image); 
     int boxX = offsetX + x * cellSize;
     int boxY = offsetY + y * cellSize;
-    Color CurColor = onTarget ? boxOnTargetColor : boxColor ;
-    DrawRectangle( boxX , boxY , cellSize , cellSize , CurColor );
+    
+    Rectangle source = 
+    {
+        0.0f,
+        0.0f,
+        static_cast<float>(texture.width),
+        static_cast<float>(texture.height)
+    };
+
+    Rectangle destination = 
+    {
+        static_cast<float>(boxX),
+        static_cast<float>(boxY),
+        static_cast<float>(cellSize),
+        static_cast<float>(cellSize)
+    };
+
+    Vector2 origin = {0.0f, 0.0f};
+
+    DrawTexturePro(texture, source, destination, origin, 0.0f, WHITE);
 }
+

@@ -3,6 +3,7 @@
 #include"Grid.h"
 #include"Level.h"
 #include"Colour.h"
+#include"AssetManager.h"
 
 enum GameState
 {
@@ -16,6 +17,7 @@ class Game
         Grid *grid;
         Level levels;
         GameState CurState = MENU;
+        AssetManager assets;
         int currentLevel = 0;
         bool iscomplete = false;
         bool Flag_Win = 0 ;

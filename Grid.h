@@ -3,6 +3,7 @@
 #include<string>
 #include"Box.h"
 #include"Player.h"
+#include"AssetManager.h"
 #include"Colour.h"
 #include<raylib.h>
 using namespace std;
@@ -35,6 +36,6 @@ class Grid
         bool CheckWin();
         int  GetMove();
 
-        void Draw();
+        void Draw(const AssetManager& assets);
     
 };

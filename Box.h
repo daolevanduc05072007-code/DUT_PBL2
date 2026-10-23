@@ -1,4 +1,5 @@
 #include"Entity.h"
+#include"AssetManager.h"
 class Box : public Entity
 {
     private:
@@ -10,5 +11,5 @@ class Box : public Entity
         void setY(int y);
         void SetOnTarget( bool status );
 
-        void Draw() override;
+        void Draw( const AssetManager &assets ) override ;
 };

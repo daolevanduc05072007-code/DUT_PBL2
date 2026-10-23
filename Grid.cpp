@@ -111,7 +111,7 @@ int Grid::GetMove()
     return cntMove;
 }
 
-void Grid::Draw()
+void Grid::Draw(const AssetManager& assets)
 {
     for ( int i = 0 ; i < FloorMap.size() ; ++i )
         for ( int j = 0 ; j < FloorMap[i].size() ; ++j )
@@ -138,10 +138,10 @@ void Grid::Draw()
         else
             box.SetOnTarget(false);
 
-        box.Draw();
+        box.Draw(assets);
     }
 
-    player.Draw();
+    player.Draw(assets);
 }
 
 bool Grid::UndoMove()

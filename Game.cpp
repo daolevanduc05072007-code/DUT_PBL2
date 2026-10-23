@@ -6,6 +6,10 @@ const int screenHeight = 1080;
 Game::Game()
 {
     InitWindow(screenWidth, screenHeight, "PBL2-SOKOBAN");
+    if ( !assets.LoadTextures() )
+    {
+        TraceLog( LOG_ERROR , "Some game textures could not be loaded ");
+    }
     SetTargetFPS(120);
     grid = nullptr;
     LoadLevel(0);   
@@ -15,6 +19,7 @@ Game::Game()
 Game::~Game()
 {
     delete grid;
+    assets.Unload();
     CloseWindow();
 }
 
@@ -127,7 +132,7 @@ void Game::Render()
 
     if ( grid != nullptr )
     {
-        grid->Draw();
+        grid->Draw(assets);
         int currentMoves = grid->GetMove();
 
         const char* moveText = TextFormat("MOVES: %d", currentMoves);
