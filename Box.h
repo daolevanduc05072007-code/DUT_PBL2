@@ -3,13 +3,13 @@
 class Box : public Entity
 {
     private:
-        bool onTarget = false;
+        bool IsOnTarget = false;
     public:
-        Box(int x , int y , int cellSize , int offsetX , int offsetY ) ;
+        Box(int X, int Y, int CellSize, int OffsetX, int OffsetY);
 
-        void setX(int x);
-        void setY(int y);
-        void SetOnTarget( bool status );
+        void SetX(int X);
+        void SetY(int Y);
+        void SetOnTarget(bool Status);
 
-        void Draw( const AssetManager &assets ) override ;
+        void Draw(const AssetManager& Assets) override;
 };

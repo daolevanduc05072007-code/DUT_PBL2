@@ -4,6 +4,6 @@ class Player : public Entity
 {
     public:
         Player();
-        Player(int x , int y , int cellSize , int offsetX , int offsetY );
-        void Draw(const AssetManager& assets) override;
+        Player(int X, int Y, int CellSize, int OffsetX, int OffsetY);
+        void Draw(const AssetManager& Assets) override;
 };

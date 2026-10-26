@@ -1,90 +1,89 @@
 #include"Grid.h"
 
-const int mx[4] = {  0 , 0 ,  -1 , 1 };
-const int my[4] = { -1 , 1 ,   0 , 0 };
+const int MoveX[4] = {0, 0, -1, 1};
+const int MoveY[4] = {-1, 1, 0, 0};
 
-Grid::Grid( vector<string> &LevelData ,  const int &sw , const int &sh )
+Grid::Grid(vector<string>& LevelData, const int& ScreenWidth, const int& ScreenHeight)
 {
-    cellSize = 48;
-    cntMove = 0;
+    CellSize = 48;
+    MoveCount = 0;
 
     // Lay so cot lon nhat trong LevelData
-    int MaxRow = LevelData.size();
+    int MaxRow = static_cast<int>(LevelData.size());
     int MaxCol = 0;
-    for ( string &row : LevelData )
+    for (string& Row : LevelData)
     {
-        if ( row.length() > MaxCol )
-            MaxCol = row.length();
+        if (static_cast<int>(Row.length()) > MaxCol)
+            MaxCol = static_cast<int>(Row.length());
     }
     
     // Lay vien cua Grid de can giua LevelData
-    offsetX = ( sw - MaxCol * cellSize ) / 2;
-    offsetY = ( sh - MaxRow * cellSize ) / 2;
+    OffsetX = (ScreenWidth - MaxCol * CellSize) / 2;
+    OffsetY = (ScreenHeight - MaxRow * CellSize) / 2;
 
     // Khoi tao FloorMap voi gia tri mac dinh la 0 (floor)
-    vector<int> tmpRow;
-    for ( int i = 0 ; i < MaxCol ; ++i )
-        tmpRow.push_back(0);
-    for ( int i = 0 ; i < MaxRow ; ++i )
-        FloorMap.push_back(tmpRow);
+    vector<int> TempRow(MaxCol, 0);
+    for (int Row = 0; Row < MaxRow; ++Row)
+        FloorMap.push_back(TempRow);
 
     // Duyet LevelData de khoi tao FloorMap, Boxes va Player
-        for ( int i = 0 ; i < MaxRow ; ++i )
+        for (int Row = 0; Row < MaxRow; ++Row)
         {
-            for ( int j = 0 ; j < LevelData[i].length() ; ++j )
+            for (int Col = 0; Col < static_cast<int>(LevelData[Row].length()); ++Col)
             {
-                if ( LevelData[i][j] == '#' )
-                    FloorMap[i][j] = 1; // wall
-                if ( LevelData[i][j] == '.' )
-                    FloorMap[i][j] = 2; // target
-                if ( LevelData[i][j] == '$' )
-                    Boxes.push_back(Box(j , i , cellSize , offsetX , offsetY )); // box
-                if ( LevelData[i][j] == '@' )
-                    player = Player(j, i , cellSize , offsetX , offsetY ); // player
+                if (LevelData[Row][Col] == '#')
+                    FloorMap[Row][Col] = 1; // wall
+                if (LevelData[Row][Col] == '.')
+                    FloorMap[Row][Col] = 2; // target
+                if (LevelData[Row][Col] == '$')
+                    Boxes.push_back(Box(Col, Row, CellSize, OffsetX, OffsetY)); // box
+                if (LevelData[Row][Col] == '@')
+                    CurrentPlayer = Player(Col, Row, CellSize, OffsetX, OffsetY); // player
             }
         }
 
 
 }
 
-void Grid::MovePlayer( int keymove )
+void Grid::MovePlayer(int KeyMove)
 {
-    MoveState previousState{ player , Boxes };
+    MoveState PreviousState{CurrentPlayer, Boxes};
 
-    if ( CheckLegitMove(keymove) == true )
+    if (CheckLegitMove(KeyMove))
     {
-        moveHistory.push_back( previousState );
-        cntMove++;
-        player = Player(player.getX()+mx[keymove], player.getY()+my[keymove] , cellSize , offsetX , offsetY );
+        MoveHistory.push_back(PreviousState);
+        MoveCount++;
+        CurrentPlayer = Player(CurrentPlayer.GetX() + MoveX[KeyMove], CurrentPlayer.GetY() + MoveY[KeyMove],
+                               CellSize, OffsetX, OffsetY);
     }
 }
 
-bool Grid::CheckLegitMove( int keymove )
+bool Grid::CheckLegitMove(int KeyMove)
 {
-    int newX = player.getX() + mx[keymove];
-    int newY = player.getY() + my[keymove];
+    int NewX = CurrentPlayer.GetX() + MoveX[KeyMove];
+    int NewY = CurrentPlayer.GetY() + MoveY[KeyMove];
 
-    if ( FloorMap[newY][newX] == 1 )
+    if (FloorMap[NewY][NewX] == 1)
         return false;
 
-    for ( auto &box : Boxes )
+    for (auto& BoxItem : Boxes)
     {
-        if ( box.getX() == newX && box.getY() == newY )
+        if (BoxItem.GetX() == NewX && BoxItem.GetY() == NewY)
         {
-            int boxNewX = box.getX() + mx[keymove];
-            int boxNewY = box.getY() + my[keymove];
+            int BoxNewX = BoxItem.GetX() + MoveX[KeyMove];
+            int BoxNewY = BoxItem.GetY() + MoveY[KeyMove];
 
-            if ( FloorMap[boxNewY][boxNewX] == 1 )
+            if (FloorMap[BoxNewY][BoxNewX] == 1)
                 return false;
 
-            for ( auto &otherBox : Boxes )
+            for (auto& OtherBox : Boxes)
             {
-                if ( otherBox.getX() == boxNewX && otherBox.getY() == boxNewY )
+                if (OtherBox.GetX() == BoxNewX && OtherBox.GetY() == BoxNewY)
                     return false;
             }
 
-            box.setX( boxNewX );
-            box.setY( boxNewY );
+            BoxItem.SetX(BoxNewX);
+            BoxItem.SetY(BoxNewY);
             return true;
         }
     }
@@ -93,70 +92,90 @@ bool Grid::CheckLegitMove( int keymove )
 
 bool Grid::CheckWin()
 {
-    int cnt = 0;
-    for ( auto &box : Boxes )
+    int BoxCountOnTargets = 0;
+    for (auto& BoxItem : Boxes)
     {
-        if ( FloorMap[box.getY()][box.getX()] == 2 )
-            cnt++;
+        if (FloorMap[BoxItem.GetY()][BoxItem.GetX()] == 2)
+            BoxCountOnTargets++;
     }
 
-    if ( cnt == Boxes.size() )
-        return true;
-    else 
-        return false;
+    return BoxCountOnTargets == static_cast<int>(Boxes.size());
 }
 
 int Grid::GetMove()
 {
-    return cntMove;
+    return MoveCount;
 }
 
-void Grid::Draw(const AssetManager& assets)
+void Grid::Draw(const AssetManager& Assets)
 {
-    for ( int i = 0 ; i < FloorMap.size() ; ++i )
-        for ( int j = 0 ; j < FloorMap[i].size() ; ++j )
+    Texture2D FloorTexture = Assets.GetTexture(TextureAsset::Floor);
+    Texture2D WallTexture = Assets.GetTexture(TextureAsset::Wall);
+
+    for (int Row = 0; Row < static_cast<int>(FloorMap.size()); ++Row)
+        for (int Col = 0; Col < static_cast<int>(FloorMap[Row].size()); ++Col)
         {
-            int x = offsetX + j * cellSize;
-            int y = offsetY + i * cellSize;
+            int TileX = OffsetX + Col * CellSize;
+            int TileY = OffsetY + Row * CellSize;
+            bool IsWall = FloorMap[Row][Col] == 1;
+            Texture2D Texture = IsWall ? WallTexture : FloorTexture;
 
-            if ( FloorMap[i][j] == 1 )
-                DrawRectangle( x , y , cellSize , cellSize , wallColor );
-            if ( FloorMap[i][j] == 2 )
+            if (Texture.id != 0)
             {
-                int CenterX = x + cellSize/2;
-                int CenterY = y + cellSize/2;
+                Rectangle Source = {
+                    0.0f,
+                    0.0f,
+                    static_cast<float>(Texture.width),
+                    static_cast<float>(Texture.height)
+                };
+                Rectangle Destination = {
+                    static_cast<float>(TileX),
+                    static_cast<float>(TileY),
+                    static_cast<float>(CellSize),
+                    static_cast<float>(CellSize)
+                };
+                DrawTexturePro(Texture, Source, Destination, {0.0f, 0.0f}, 0.0f, WHITE);
+            }
+            else
+            {
+                DrawRectangle(TileX, TileY, CellSize, CellSize, IsWall ? WallColor : BackgroundColor);
+            }
 
-                float radius = cellSize / 4.0f;
-                DrawCircle( CenterX , CenterY , radius , targetColor );
+            if (FloorMap[Row][Col] == 2)
+            {
+                int CenterX = TileX + CellSize / 2;
+                int CenterY = TileY + CellSize / 2;
+                float Radius = CellSize / 4.0f;
+                DrawCircle(CenterX, CenterY, Radius, TargetColor);
             }
         }
 
-    for ( auto &box : Boxes )
+    for (auto& BoxItem : Boxes)
     {
-        if ( FloorMap[box.getY()][box.getX()] == 2 )
-            box.SetOnTarget(true);
+        if (FloorMap[BoxItem.GetY()][BoxItem.GetX()] == 2)
+            BoxItem.SetOnTarget(true);
         else
-            box.SetOnTarget(false);
+            BoxItem.SetOnTarget(false);
 
-        box.Draw(assets);
+        BoxItem.Draw(Assets);
     }
 
-    player.Draw(assets);
+    CurrentPlayer.Draw(Assets);
 }
 
 bool Grid::UndoMove()
 {
-    if ( moveHistory.empty() )
+    if (MoveHistory.empty())
     {
         return false;
     }
 
-    MoveState previousState = moveHistory.back();
-    moveHistory.pop_back();
+    MoveState PreviousState = MoveHistory.back();
+    MoveHistory.pop_back();
 
-    player = previousState.player;
-    Boxes = previousState.boxes;
-    cntMove--;
+    CurrentPlayer = PreviousState.PlayerState;
+    Boxes = PreviousState.BoxStates;
+    MoveCount--;
 
     return true;
 }

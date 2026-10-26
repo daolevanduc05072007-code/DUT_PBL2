@@ -1,41 +1,41 @@
 #include"Box.h"
 
-Box::Box(int x, int y , int cellSize , int offsetX , int offsetY ) : Entity( x, y , cellSize , offsetX , offsetY )    {}
+Box::Box(int X, int Y, int CellSize, int OffsetX, int OffsetY)
+    : Entity(X, Y, CellSize, OffsetX, OffsetY) {}
 
-void Box::setX(int x) { this->x = x; }
+void Box::SetX(int X) { this->X = X; }
 
-void Box::setY(int y) { this->y = y; }
+void Box::SetY(int Y) { this->Y = Y; }
 
-void Box::SetOnTarget( bool status)
+void Box::SetOnTarget(bool Status)
 {
-    onTarget = status;
+    IsOnTarget = Status;
 }
 
-void Box::Draw( const AssetManager &assets ) 
+void Box::Draw(const AssetManager& Assets)
 {
-    TextureAsset image = onTarget ? TextureAsset::BoxOnTarget : TextureAsset::Box;
-    Texture2D texture = assets.GetTexture(image); 
-    int boxX = offsetX + x * cellSize;
-    int boxY = offsetY + y * cellSize;
+    TextureAsset Image = IsOnTarget ? TextureAsset::BoxOnTarget : TextureAsset::Box;
+    Texture2D Texture = Assets.GetTexture(Image);
+    int BoxX = OffsetX + X * CellSize;
+    int BoxY = OffsetY + Y * CellSize;
     
-    Rectangle source = 
+    Rectangle Source =
     {
         0.0f,
         0.0f,
-        static_cast<float>(texture.width),
-        static_cast<float>(texture.height)
+        static_cast<float>(Texture.width),
+        static_cast<float>(Texture.height)
     };
 
-    Rectangle destination = 
+    Rectangle Destination =
     {
-        static_cast<float>(boxX),
-        static_cast<float>(boxY),
-        static_cast<float>(cellSize),
-        static_cast<float>(cellSize)
+        static_cast<float>(BoxX),
+        static_cast<float>(BoxY),
+        static_cast<float>(CellSize),
+        static_cast<float>(CellSize)
     };
 
-    Vector2 origin = {0.0f, 0.0f};
+    Vector2 Origin = {0.0f, 0.0f};
 
-    DrawTexturePro(texture, source, destination, origin, 0.0f, WHITE);
+    DrawTexturePro(Texture, Source, Destination, Origin, 0.0f, WHITE);
 }
-

@@ -7,11 +7,11 @@ using namespace std;
 class Level
 {
     private:
-        vector< vector<string> > data;
+        vector<vector<string>> LevelData;
 
     public:
         Level();
         int GetSizeLevel() const;
-        vector<string> &get(int index);
+        vector<string>& GetLevel(int Index);
 
 };

@@ -13,29 +13,29 @@ class Grid
     private:
         struct MoveState
         {
-            Player player;
-            vector<Box> boxes;
+            Player PlayerState;
+            vector<Box> BoxStates;
         };
         
-        int cellSize;
-        int offsetX;
-        int offsetY;
-        int cntMove;
+        int CellSize;
+        int OffsetX;
+        int OffsetY;
+        int MoveCount;
 
-        vector<vector<int> > FloorMap; // 0: floor, 1: wall, 2: target
-        vector<MoveState> moveHistory;
+        vector<vector<int>> FloorMap; // 0: floor, 1: wall, 2: target
+        vector<MoveState> MoveHistory;
     public:
-        Grid( vector<string> &LevelData , const int &sw , const int &sh );
+        Grid(vector<string>& LevelData, const int& ScreenWidth, const int& ScreenHeight);
 
         vector<Box> Boxes;
-        Player player;
+        Player CurrentPlayer;
 
-        void MovePlayer( int keymove );
+        void MovePlayer(int KeyMove);
         bool UndoMove();
-        bool CheckLegitMove( int keymove );
+        bool CheckLegitMove(int KeyMove);
         bool CheckWin();
-        int  GetMove();
+        int GetMove();
 
-        void Draw(const AssetManager& assets);
+        void Draw(const AssetManager& Assets);
     
 };

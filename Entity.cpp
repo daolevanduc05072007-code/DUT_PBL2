@@ -1,13 +1,13 @@
 #include"Entity.h"
 
-Entity::Entity( int x , int y , int cellSize , int offsetX , int offsetY )
+Entity::Entity(int X, int Y, int CellSize, int OffsetX, int OffsetY)
 {
-    this->x = x;
-    this->y = y;
-    this->cellSize = cellSize;
-    this->offsetX = offsetX;
-    this->offsetY = offsetY;
+    this->X = X;
+    this->Y = Y;
+    this->CellSize = CellSize;
+    this->OffsetX = OffsetX;
+    this->OffsetY = OffsetY;
 }
 
-int Entity::getX() const { return x; }
-int Entity::getY() const { return y; }
+int Entity::GetX() const { return X; }
+int Entity::GetY() const { return Y; }

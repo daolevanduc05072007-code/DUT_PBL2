@@ -4,16 +4,22 @@
 enum class TextureAsset
 {
     Box, 
-    BoxOnTarget
+    BoxOnTarget,
+    Wall,
+    Floor,
+    CharacterDown
 };
 
 class AssetManager
 {
     private:
-        Texture2D boxTexture = {};
-        Texture2D boxOnTargetTexture = {};
+        Texture2D BoxTexture = {};
+        Texture2D BoxOnTargetTexture = {};
+        Texture2D WallTexture = {};
+        Texture2D FloorTexture = {};
+        Texture2D CharacterDownTexture = {};
     public:
         bool LoadTextures();
         void Unload();
-        Texture2D GetTexture( TextureAsset asset ) const; 
+        Texture2D GetTexture(TextureAsset Asset) const;
 };

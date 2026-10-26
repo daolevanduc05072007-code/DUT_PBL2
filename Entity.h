@@ -5,17 +5,17 @@ class AssetManager;
 class Entity
 {
     protected:
-        int x;
-        int y;
-        int cellSize;
-        int offsetX;
-        int offsetY;
+        int X;
+        int Y;
+        int CellSize;
+        int OffsetX;
+        int OffsetY;
     public:
-        Entity() { x = 0 ; y = 0 ; cellSize = 0 ; offsetX = 0 ; offsetY = 0; }
-        Entity( int x , int y , int cellSize , int offSetX , int offsetY );
-        int getX() const;
-        int getY() const;
-        virtual void Draw( const AssetManager &assets ) = 0;
+        Entity() : X(0), Y(0), CellSize(0), OffsetX(0), OffsetY(0) {}
+        Entity(int X, int Y, int CellSize, int OffsetX, int OffsetY);
+        int GetX() const;
+        int GetY() const;
+        virtual void Draw(const AssetManager& Assets) = 0;
         virtual ~Entity() {}    
 
 };

@@ -2,7 +2,7 @@
 
 int main() 
 {
-    Game game;
-    game.Run();
+    Game GameInstance;
+    GameInstance.Run();
     return 0;
 }

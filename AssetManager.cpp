@@ -2,12 +2,20 @@
 
 bool AssetManager::LoadTextures()
 {
-    boxTexture = LoadTexture("PicturesPBL/Box_0.png");
-    boxOnTargetTexture = LoadTexture("PicturesPBL/Box_1.png");
+    BoxTexture = LoadTexture("PicturesPBL/Box_0.png");
+    BoxOnTargetTexture = LoadTexture("PicturesPBL/Box_1.png");
+    WallTexture = LoadTexture("PicturesPBL/Wall.png");
+    FloorTexture = LoadTexture("PicturesPBL/Floor.png");
+    CharacterDownTexture = LoadTexture("PicturesPBL/character_down.png");
 
-    if (boxTexture.id == 0 || boxOnTargetTexture.id == 0)
+    if (
+        BoxTexture.id == 0 ||
+        BoxOnTargetTexture.id == 0 ||
+        WallTexture.id == 0 ||
+        FloorTexture.id == 0 ||
+        CharacterDownTexture.id == 0)
     {
-        TraceLog(LOG_ERROR, "Failed to load box textures");
+        TraceLog(LOG_ERROR, "Failed to load textures");
         Unload();
         return false;
     }
@@ -17,24 +25,39 @@ bool AssetManager::LoadTextures()
 
 void AssetManager::Unload()
 {
-    if (boxTexture.id != 0)
-        UnloadTexture(boxTexture);
-    if (boxOnTargetTexture.id != 0)
-        ::UnloadTexture(boxOnTargetTexture);
+    if (BoxTexture.id != 0)
+        UnloadTexture(BoxTexture);
+    if (BoxOnTargetTexture.id != 0)
+        UnloadTexture(BoxOnTargetTexture);
+    if (WallTexture.id != 0)
+        UnloadTexture(WallTexture);
+    if (FloorTexture.id != 0)
+        UnloadTexture(FloorTexture);
+    if (CharacterDownTexture.id != 0)
+        UnloadTexture(CharacterDownTexture);
 
-    boxTexture = {};
-    boxOnTargetTexture = {};
+    BoxTexture = {};
+    BoxOnTargetTexture = {};
+    WallTexture = {};
+    FloorTexture = {};
+    CharacterDownTexture = {};
 }
 
-Texture2D AssetManager ::GetTexture( TextureAsset asset ) const 
+Texture2D AssetManager::GetTexture(TextureAsset Asset) const
 {
-    switch ( asset )
+    switch (Asset)
     {
         case TextureAsset::Box:
-            return boxTexture;
+            return BoxTexture;
         case TextureAsset::BoxOnTarget:
-            return boxOnTargetTexture;
-        
+            return BoxOnTargetTexture;
+        case TextureAsset::Wall:
+            return WallTexture;
+        case TextureAsset::Floor:
+            return FloorTexture;
+        case TextureAsset::CharacterDown:
+            return CharacterDownTexture;
+
         default:
             TraceLog( LOG_ERROR , "Unknown texture asset" );
             return {};

@@ -1,9 +1,9 @@
 #pragma once
 #include<raylib.h>
 
-extern const Color backgroundColor; 
-extern const Color wallColor;
-extern const Color boxColor;
-extern const Color boxOnTargetColor;
-extern const Color targetColor;
-extern const Color playerColor;
+extern const Color BackgroundColor;
+extern const Color WallColor;
+extern const Color BoxColor;
+extern const Color BoxOnTargetColor;
+extern const Color TargetColor;
+extern const Color PlayerColor;

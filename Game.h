@@ -5,22 +5,22 @@
 #include"Colour.h"
 #include"AssetManager.h"
 
-enum GameState
+enum class GameState
 {
-    MENU = 0,
-    PLAYING = 1
+    Menu,
+    Playing
 
 };
 class Game
 {
     private:
-        Grid *grid;
-        Level levels;
-        GameState CurState = MENU;
-        AssetManager assets;
-        int currentLevel = 0;
-        bool iscomplete = false;
-        bool Flag_Win = 0 ;
+        Grid* GridInstance;
+        Level Levels;
+        GameState CurrentState = GameState::Menu;
+        AssetManager Assets;
+        int CurrentLevel = 0;
+        bool IsComplete = false;
+        bool HasWonAllLevels = false;
 
        
         
@@ -30,7 +30,7 @@ class Game
         ~Game();
 
         void Run();
-        void LoadLevel( int index );
+        void LoadLevel(int Index);
         void HandleInput();
         void Update();
         bool CheckWinCondition();

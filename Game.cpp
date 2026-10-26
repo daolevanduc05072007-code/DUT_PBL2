@@ -1,83 +1,83 @@
 #include"Game.h"
 
-const int screenWidth = 1440;
-const int screenHeight = 1080;
+const int ScreenWidth = 1440;
+const int ScreenHeight = 1080;
 
 Game::Game()
 {
-    InitWindow(screenWidth, screenHeight, "PBL2-SOKOBAN");
-    if ( !assets.LoadTextures() )
+    InitWindow(ScreenWidth, ScreenHeight, "PBL2-SOKOBAN");
+    if (!Assets.LoadTextures())
     {
         TraceLog( LOG_ERROR , "Some game textures could not be loaded ");
     }
     SetTargetFPS(120);
-    grid = nullptr;
+    GridInstance = nullptr;
     LoadLevel(0);   
 
 }
 
 Game::~Game()
 {
-    delete grid;
-    assets.Unload();
+    delete GridInstance;
+    Assets.Unload();
     CloseWindow();
 }
 
 void Game::Run()
 {
-    while ( !WindowShouldClose() )
+    while (!WindowShouldClose())
     {
         HandleInput();
         Update();
         BeginDrawing();
-        ClearBackground(backgroundColor);
+        ClearBackground(BackgroundColor);
         Render();
         EndDrawing();
     }
 }
 
-void Game::LoadLevel( int index )
+void Game::LoadLevel(int Index)
 {
-    vector<string> levelData = levels.get(index);
-    if ( grid != nullptr )
+    vector<string> LevelData = Levels.GetLevel(Index);
+    if (GridInstance != nullptr)
     {
-        delete grid;
-        grid = nullptr;
+        delete GridInstance;
+        GridInstance = nullptr;
     }
-    grid = new Grid(levelData, screenWidth, screenHeight);
+    GridInstance = new Grid(LevelData, ScreenWidth, ScreenHeight);
 }
 
 void Game::HandleInput()
 {
-    if ( CurState == MENU )
+    if (CurrentState == GameState::Menu)
     {
-        if ( IsKeyPressed(KEY_ENTER) )
+        if (IsKeyPressed(KEY_ENTER))
         {
-            CurState = PLAYING;
-            LoadLevel(currentLevel);
+            CurrentState = GameState::Playing;
+            LoadLevel(CurrentLevel);
         }
         return;
     }
 
-    if ( IsKeyPressed(KEY_Z) )
+    if (IsKeyPressed(KEY_Z))
     {
-        if ( grid != nullptr && grid->UndoMove() )
+        if (GridInstance != nullptr && GridInstance->UndoMove())
         {
-            iscomplete = false;
-            Flag_Win = false;
+            IsComplete = false;
+            HasWonAllLevels = false;
         }
         return;
 
     }
-    if ( iscomplete == true )
+    if (IsComplete)
     {
-        if ( IsKeyPressed(KEY_ENTER) )
+        if (IsKeyPressed(KEY_ENTER))
         {
-            if ( currentLevel+1 < levels.GetSizeLevel() )
+            if (CurrentLevel + 1 < Levels.GetSizeLevel())
             {
-                currentLevel++;
-                LoadLevel(currentLevel);
-                iscomplete = false;
+                CurrentLevel++;
+                LoadLevel(CurrentLevel);
+                IsComplete = false;
             }
             else
                 SetWinAllLevel();
@@ -85,126 +85,126 @@ void Game::HandleInput()
         return;
     }
 
-    if ( IsKeyPressed(KEY_R ) )
+    if (IsKeyPressed(KEY_R))
     {
-        LoadLevel(currentLevel);
+        LoadLevel(CurrentLevel);
         return;
     }
-    if ( grid != nullptr )
+    if (GridInstance != nullptr)
     {
-        if ( IsKeyPressed(KEY_UP) )
+        if (IsKeyPressed(KEY_UP))
         {
-            grid->MovePlayer(0);
+            GridInstance->MovePlayer(0);
         }
-        else if ( IsKeyPressed(KEY_DOWN) )
+        else if (IsKeyPressed(KEY_DOWN))
         {
-            grid->MovePlayer(1);
+            GridInstance->MovePlayer(1);
         }
-        else if ( IsKeyPressed(KEY_LEFT) )
+        else if (IsKeyPressed(KEY_LEFT))
         {
-            grid->MovePlayer(2);
+            GridInstance->MovePlayer(2);
         }
-        else if ( IsKeyPressed(KEY_RIGHT) )
+        else if (IsKeyPressed(KEY_RIGHT))
         {
-            grid->MovePlayer(3);
+            GridInstance->MovePlayer(3);
         }
     }
 }
 
 void Game::Update()
 {
-    if ( CheckWinCondition() == true  )
-        iscomplete = true;
+    if (CheckWinCondition())
+        IsComplete = true;
 }
 
 bool Game::CheckWinCondition()
 {
-    return grid->CheckWin();
+    return GridInstance != nullptr && GridInstance->CheckWin();
 }
 
 void Game::Render()
 {
-    if ( CurState == MENU )
+    if (CurrentState == GameState::Menu)
     {
         DrawMenu();
         return;
     }
 
-    if ( grid != nullptr )
+    if (GridInstance != nullptr)
     {
-        grid->Draw(assets);
-        int currentMoves = grid->GetMove();
+        GridInstance->Draw(Assets);
+        int CurrentMoves = GridInstance->GetMove();
 
-        const char* moveText = TextFormat("MOVES: %d", currentMoves);
-        int fontSize = 30;
-        int textWidth = MeasureText(moveText, fontSize);
+        const char* MoveText = TextFormat("MOVES: %d", CurrentMoves);
+        int FontSize = 30;
+        int TextWidth = MeasureText(MoveText, FontSize);
 
-        int xPos = screenWidth - textWidth - 30;
-        int yPos = 20;
+        int XPos = ScreenWidth - TextWidth - 30;
+        int YPos = 20;
 
-        DrawText(moveText, xPos, yPos, fontSize, BLACK);
+        DrawText(MoveText, XPos, YPos, FontSize, BLACK);
     }
 
-    if ( Flag_Win == true )
+    if (HasWonAllLevels)
     {
-        const char* text = "Congratulations!";
-        int fontSize = 60;
-        int x = (screenWidth - MeasureText(text, fontSize)) / 2;
-        int y = screenHeight / 2;
+        const char* Text = "Congratulations!";
+        int FontSize = 60;
+        int X = (ScreenWidth - MeasureText(Text, FontSize)) / 2;
+        int Y = ScreenHeight / 2;
 
-        DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.7f));
-        DrawText(text, x, y, fontSize, YELLOW);
+        DrawRectangle(0, 0, ScreenWidth, ScreenHeight, Fade(BLACK, 0.7f));
+        DrawText(Text, X, Y, FontSize, YELLOW);
         return;
     }
-    if ( iscomplete == true )
+    if (IsComplete)
     {
-        DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.6f));
+        DrawRectangle(0, 0, ScreenWidth, ScreenHeight, Fade(BLACK, 0.6f));
 
-        const char* winText = "LEVEL CLEARED!";
-        int fontSize = 60;
+        const char* WinText = "LEVEL CLEARED!";
+        int FontSize = 60;
 
-        int textWidth = MeasureText(winText, fontSize);
-        int xPos = (screenWidth - textWidth) / 2;
-        int yPos = (screenHeight / 2)-50;
+        int TextWidth = MeasureText(WinText, FontSize);
+        int XPos = (ScreenWidth - TextWidth) / 2;
+        int YPos = (ScreenHeight / 2) - 50;
 
-        DrawText(winText, xPos, yPos, fontSize, YELLOW);
+        DrawText(WinText, XPos, YPos, FontSize, YELLOW);
 
-        const char* subText = "Press ENTER to next level";
-        int subFontSize = 25;
-        int subTextWidth = MeasureText(subText, subFontSize);
-        int subXPos = (screenWidth - subTextWidth) / 2;
-        int subYPos = yPos + fontSize + 20;
+        const char* SubText = "Press ENTER to next level";
+        int SubFontSize = 25;
+        int SubTextWidth = MeasureText(SubText, SubFontSize);
+        int SubXPos = (ScreenWidth - SubTextWidth) / 2;
+        int SubYPos = YPos + FontSize + 20;
 
-        DrawText(subText, subXPos, subYPos, subFontSize, WHITE);
+        DrawText(SubText, SubXPos, SubYPos, SubFontSize, WHITE);
     }
 }
 
 void Game::DrawMenu()
 {
-    DrawRectangle( 0 , 0 , screenWidth , screenHeight , Fade(BLACK, 0.8f) );
+    DrawRectangle(0, 0, ScreenWidth, ScreenHeight, Fade(BLACK, 0.8f));
 
     const char* Title = "PBL2: SOKOBAN GAME";
-    const char* NameStudent = "DAO LE VAN DUC - LE TUC TRI";
+    const char* StudentName = "DAO LE VAN DUC - LE TUC TRI";
     const char* ClassName = "25T_DT1";
     const char* Prompt = "PRESS [ENTER] TO START";
 
     int TitleSize = 50;
-    int NameSize = 24;
+    int StudentNameSize = 24;
     int ClassSize = 22;
     int PromptSize = 30;
 
-    int titleX = (screenWidth - MeasureText(Title, TitleSize)) / 2;
-    int nameX  = (screenWidth - MeasureText(NameStudent, NameSize)) / 2;
-    int classX = (screenWidth - MeasureText(ClassName, ClassSize)) / 2;
-    int promptX = (screenWidth - MeasureText(Prompt, PromptSize)) / 2;
+    int TitleX = (ScreenWidth - MeasureText(Title, TitleSize)) / 2;
+    int StudentNameX = (ScreenWidth - MeasureText(StudentName, StudentNameSize)) / 2;
+    int ClassX = (ScreenWidth - MeasureText(ClassName, ClassSize)) / 2;
+    int PromptX = (ScreenWidth - MeasureText(Prompt, PromptSize)) / 2;
 
-    DrawText(Title, titleX, 200, TitleSize, RED);
-    DrawText(NameStudent, nameX, 320, NameSize, WHITE);
-    DrawText(ClassName, classX, 360, ClassSize, WHITE);
-    DrawText(Prompt, promptX, 480, PromptSize, GREEN);
+    DrawText(Title, TitleX, 200, TitleSize, RED);
+    DrawText(StudentName, StudentNameX, 320, StudentNameSize, WHITE);
+    DrawText(ClassName, ClassX, 360, ClassSize, WHITE);
+    DrawText(Prompt, PromptX, 480, PromptSize, GREEN);
 }
 
 void Game::SetWinAllLevel()
 {
-    Flag_Win = true;
+    HasWonAllLevels = true;
 }
