@@ -47,14 +47,37 @@ Grid::Grid(vector<string>& LevelData, const int& ScreenWidth, const int& ScreenH
 
 void Grid::MovePlayer(int KeyMove)
 {
+
+    PlayerDirection NewDireciton;
+
+    switch ( KeyMove )
+    {
+        case 0: NewDireciton = PlayerDirection::Up;     break;
+        case 1: NewDireciton = PlayerDirection::Down;   break;
+        case 2: NewDireciton = PlayerDirection::Left;   break;
+        case 3: NewDireciton = PlayerDirection::Right;  break;
+        default: return;
+    }
+
     MoveState PreviousState{CurrentPlayer, Boxes};
+
+    CurrentPlayer.SetDirection(NewDireciton);
 
     if (CheckLegitMove(KeyMove))
     {
+
         MoveHistory.push_back(PreviousState);
         MoveCount++;
-        CurrentPlayer = Player(CurrentPlayer.GetX() + MoveX[KeyMove], CurrentPlayer.GetY() + MoveY[KeyMove],
-                               CellSize, OffsetX, OffsetY);
+        CurrentPlayer = Player
+                        (
+                            CurrentPlayer.GetX() + MoveX[KeyMove], 
+                            CurrentPlayer.GetY() + MoveY[KeyMove],
+                            CellSize, 
+                            OffsetX, 
+                            OffsetY
+                        );
+        CurrentPlayer.SetDirection(NewDireciton);
+        
     }
 }
 
@@ -122,13 +145,15 @@ void Grid::Draw(const AssetManager& Assets)
 
             if (Texture.id != 0)
             {
-                Rectangle Source = {
+                Rectangle Source = 
+                {
                     0.0f,
                     0.0f,
                     static_cast<float>(Texture.width),
                     static_cast<float>(Texture.height)
                 };
-                Rectangle Destination = {
+                Rectangle Destination = 
+                {
                     static_cast<float>(TileX),
                     static_cast<float>(TileY),
                     static_cast<float>(CellSize),

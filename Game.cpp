@@ -6,6 +6,7 @@ const int ScreenHeight = 1080;
 Game::Game()
 {
     InitWindow(ScreenWidth, ScreenHeight, "PBL2-SOKOBAN");
+    SetExitKey(KEY_ESCAPE);
     if (!Assets.LoadTextures())
     {
         TraceLog( LOG_ERROR , "Some game textures could not be loaded ");
@@ -59,7 +60,7 @@ void Game::HandleInput()
         return;
     }
 
-    if (IsKeyPressed(KEY_Z))
+    if (IsKeyPressed(KEY_V) || IsKeyPressed(KEY_Z))
     {
         if (GridInstance != nullptr && GridInstance->UndoMove())
         {
@@ -69,6 +70,14 @@ void Game::HandleInput()
         return;
 
     }
+    if (IsKeyPressed(KEY_R))
+    {
+        LoadLevel(CurrentLevel);
+        IsComplete = false;
+        HasWonAllLevels = false;
+        return;
+    }
+
     if (IsComplete)
     {
         if (IsKeyPressed(KEY_ENTER))
@@ -85,11 +94,6 @@ void Game::HandleInput()
         return;
     }
 
-    if (IsKeyPressed(KEY_R))
-    {
-        LoadLevel(CurrentLevel);
-        return;
-    }
     if (GridInstance != nullptr)
     {
         if (IsKeyPressed(KEY_UP))
@@ -133,6 +137,20 @@ void Game::Render()
     if (GridInstance != nullptr)
     {
         GridInstance->Draw(Assets);
+
+        const char* LevelText = TextFormat("LEVEL %d / %d", CurrentLevel + 1, Levels.GetSizeLevel());
+        int LevelFontSize = 32;
+        int LevelTextWidth = MeasureText(LevelText, LevelFontSize);
+        DrawText(LevelText, (ScreenWidth - LevelTextWidth) / 2, 20, LevelFontSize, YELLOW);
+
+        const int GuideX = 20;
+        const int GuideY = 18;
+        const int GuideFontSize = 22;
+        const int GuideLineHeight = 30;
+        DrawText("ESC : Exit", GuideX, GuideY, GuideFontSize, YELLOW);
+        DrawText("R : Reload", GuideX, GuideY + GuideLineHeight, GuideFontSize, YELLOW);
+        DrawText("V : Back", GuideX, GuideY + GuideLineHeight * 2, GuideFontSize, YELLOW);
+
         int CurrentMoves = GridInstance->GetMove();
 
         const char* MoveText = TextFormat("MOVES: %d", CurrentMoves);
@@ -142,7 +160,7 @@ void Game::Render()
         int XPos = ScreenWidth - TextWidth - 30;
         int YPos = 20;
 
-        DrawText(MoveText, XPos, YPos, FontSize, BLACK);
+        DrawText(MoveText, XPos, YPos, FontSize, YELLOW);
     }
 
     if (HasWonAllLevels)
@@ -181,7 +199,28 @@ void Game::Render()
 
 void Game::DrawMenu()
 {
-    DrawRectangle(0, 0, ScreenWidth, ScreenHeight, Fade(BLACK, 0.8f));
+    Texture2D Background = Assets.GetTexture(TextureAsset::MenuBackground);
+    if (Background.id != 0)
+    {
+        Rectangle Source =
+        {
+            0.0f,
+            0.0f,
+            static_cast<float>(Background.width),
+            static_cast<float>(Background.height)
+        };
+        Rectangle Destination =
+        {
+            0.0f,
+            0.0f,
+            static_cast<float>(ScreenWidth),
+            static_cast<float>(ScreenHeight)
+        };
+
+        DrawTexturePro(Background, Source, Destination, {0.0f, 0.0f}, 0.0f, WHITE);
+    }
+
+    DrawRectangle(0, 0, ScreenWidth, ScreenHeight, Fade(BLACK, 0.2f));
 
     const char* Title = "PBL2: SOKOBAN GAME";
     const char* StudentName = "DAO LE VAN DUC - LE TUC TRI";

@@ -7,7 +7,11 @@ enum class TextureAsset
     BoxOnTarget,
     Wall,
     Floor,
-    CharacterDown
+    CharacterDown,
+    CharacterUp,
+    CharacterLeft,
+    CharacterRight,
+    MenuBackground
 };
 
 class AssetManager
@@ -18,6 +22,11 @@ class AssetManager
         Texture2D WallTexture = {};
         Texture2D FloorTexture = {};
         Texture2D CharacterDownTexture = {};
+        Texture2D CharacterUpTexture = {};
+        Texture2D CharacterLeftTexture = {};
+        Texture2D CharacterRightTexture = {};
+        Texture2D MenuBackgroundTexture = {};
+
     public:
         bool LoadTextures();
         void Unload();
